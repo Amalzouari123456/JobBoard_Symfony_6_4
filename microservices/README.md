@@ -10,9 +10,10 @@ Toutes les commandes ci-dessous se lancent depuis le dossier `microservices/`.
 ## Membres de l'équipe
 
 - Amal Zouari
-- _Nom Prénom_
-- _Nom Prénom_
-- _Nom Prénom_
+- Somrani Moemen
+- Bneabdelaziz Amine
+- Trabelsi Amine
+- Amari MedAziz 
 
 ## Architecture
 
