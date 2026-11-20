@@ -238,3 +238,7 @@ Before real production use, the project would need, among other concerns:
 ## License
 
 MIT for teaching and learning use.
+
+## Atelier Eureka Server (microservices)
+
+Le dossier [`microservices/`](microservices/README.md) contient l'atelier Eureka : serveur de découverte Eureka (port 8761), microservices Candidat et Job (Spring Boot), Meeting (Node.js) et Notification (Python). Voir [microservices/README.md](microservices/README.md) pour le lancement.

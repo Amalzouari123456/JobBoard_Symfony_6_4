@@ -1,0 +1,13 @@
+{
+  "name": "meeting",
+  "version": "1.0.0",
+  "description": "Microservice Meeting (Node.js / Express) - client Eureka",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "eureka-js-client": "^4.5.0",
+    "express": "^4.21.2"
+  }
+}
