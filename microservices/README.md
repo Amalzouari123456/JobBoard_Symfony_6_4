@@ -24,6 +24,7 @@ Toutes les commandes ci-dessous se lancent depuis le dossier `microservices/`.
 | Job           | Spring Boot + MySQL | 8082 | JOB             | /api/jobs/hello                 |
 | Meeting       | Node.js / Express   | 8083 | MEETING         | /api/meetings/hello             |
 | Notification  | Python / FastAPI    | 8084 | NOTIFICATION    | /api/notifications/hello        |
+| API Gateway   | Spring Cloud Gateway | 8085 | GATEWAY        | /candidat/hello, /jobs/hello (voir [gateway/README.md](gateway/README.md)) |
 
 Versions : Spring Boot 3.5.6, Spring Cloud 2025.0.0, Java 17.
 
@@ -36,10 +37,20 @@ JobBoard_Symfony_6_4/
     ├── job/             (Partie 2)
     ├── meeting/         (Partie 3 - Node.js)
     ├── notification/    (Partie 3 - Python)
+    ├── gateway/         (Atelier 6 - API Gateway)
     └── docs/            (captures d'écran)
 ```
 
-## Lancement (dans cet ordre)
+## Lancement rapide (Windows)
+
+Démarrer MySQL dans XAMPP, puis depuis le dossier `microservices/` :
+```powershell
+.\start-all.ps1       # lance Eureka, attend qu'il soit prêt, puis les 6 instances et la Gateway
+.\start-all.ps1 -lb   # idem + 2e instance de Candidat (8091) pour observer le load balancing
+.\stop-all.ps1    # arrête tout
+```
+
+## Lancement manuel (dans cet ordre)
 
 ### 1. Eureka Server
 ```bash

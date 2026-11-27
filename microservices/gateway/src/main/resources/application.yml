@@ -1,0 +1,101 @@
+# =====================================================================
+#  API Gateway - point d'entree unique (port 8085)
+#  Configuration DYNAMIQUE (Partie 3, methode 2) : uri lb://<service>
+#  => la Gateway demande a Eureka les instances disponibles et repartit la charge.
+#
+#  Profils optionnels :
+#    static       -> Partie 2 : routes statiques (http://localhost:...), sans Eureka
+#    java-routes  -> methode 1 : routes definies en Java (config/JavaRoutesConfig)
+# =====================================================================
+server:
+  port: 8085
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Spring Cloud 2025 : prefixe "spring.cloud.gateway.server.webflux"
+          # (ancien prefixe de l'enonce : "spring.cloud.gateway")
+          # Depuis Gateway 4.3, les en-tetes X-Forwarded-* ne sont ajoutes que pour des clients
+          # de confiance. En local : la machine elle-meme (IPv4 et IPv6).
+          trusted-proxies: 127\.0\.0\.1|0:0:0:0:0:0:0:1
+          x-forwarded:
+            # pas de X-Forwarded-Prefix : Swagger "Try it out" appelle /api/... via la Gateway
+            prefix-enabled: false
+          routes:
+            # ---------- Candidat ----------
+            # Documentation OpenAPI : /candidat/v3/api-docs -> /v3/api-docs
+            - id: CANDIDAT-DOCS
+              uri: lb://candidat
+              predicates:
+                - Path=/candidat/v3/api-docs
+              filters:
+                - RewritePath=/candidat/v3/api-docs, /v3/api-docs
+            # Ressources : /candidat/1 -> /api/candidats/1
+            - id: CANDIDAT
+              uri: lb://candidat
+              predicates:
+                - Path=/candidat, /candidat/**
+              filters:
+                - RewritePath=/candidat(?<segment>/?.*), /api/candidats$\{segment}
+
+            # ---------- Job ----------
+            - id: JOB-DOCS
+              uri: lb://job
+              predicates:
+                - Path=/jobs/v3/api-docs
+              filters:
+                - RewritePath=/jobs/v3/api-docs, /v3/api-docs
+            # /jobs/1 -> /api/jobs/1
+            - id: JOB
+              uri: lb://job
+              predicates:
+                - Path=/jobs, /jobs/**
+              filters:
+                - RewritePath=/jobs(?<segment>/?.*), /api/jobs$\{segment}
+
+            # ---------- Chemins d'origine (utilises par Swagger "Try it out") ----------
+            - id: CANDIDAT-API
+              uri: lb://candidat
+              predicates:
+                - Path=/api/candidats, /api/candidats/**
+            - id: JOB-API
+              uri: lb://job
+              predicates:
+                - Path=/api/jobs, /api/jobs/**
+
+# ---------- Eureka ----------
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    # rafraichir le registre plus souvent (defaut 30 s) pour voir vite les nouvelles instances
+    registry-fetch-interval-seconds: 5
+
+# ---------- Partie 3 - Question 3 : algorithme Random pour Candidat ----------
+# false = algorithme par defaut (question 2.b) ; true = Random pour "candidat" uniquement
+gateway:
+  lb:
+    candidat-random: false
+
+# ---------- Partie 4 : portail Swagger unifie ----------
+# http://localhost:8085/swagger-ui.html
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Candidat
+        url: /candidat/v3/api-docs
+      - name: Job
+        url: /jobs/v3/api-docs
+
+# ---------- Partie 3.2.a : visualiser le routage ----------
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG

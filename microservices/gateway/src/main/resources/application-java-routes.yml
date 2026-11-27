@@ -1,0 +1,9 @@
+# Methode 1 : routes definies en Java (config/JavaRoutesConfig).
+# Lancement : mvn spring-boot:run -Dspring-boot.run.profiles=java-routes
+# On vide les routes du fichier de configuration pour ne garder que celles du RouteLocator.
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes: []

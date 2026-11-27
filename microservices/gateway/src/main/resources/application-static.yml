@@ -1,0 +1,22 @@
+# Partie 2 : configuration STATIQUE (methode 2, fichier de configuration)
+# Lancement : mvn spring-boot:run -Dspring-boot.run.profiles=static
+# La Gateway pointe directement sur l'adresse du microservice, sans passer par Eureka.
+# Ports de CE projet : Candidat = 8081, Job = 8082 (inverses par rapport a l'enonce).
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: CANDIDAT
+              uri: http://localhost:8081
+              predicates:
+                - Path=/candidat, /candidat/**
+              filters:
+                - RewritePath=/candidat(?<segment>/?.*), /api/candidats$\{segment}
+            - id: JOB
+              uri: http://localhost:8082
+              predicates:
+                - Path=/jobs, /jobs/**
+              filters:
+                - RewritePath=/jobs(?<segment>/?.*), /api/jobs$\{segment}
